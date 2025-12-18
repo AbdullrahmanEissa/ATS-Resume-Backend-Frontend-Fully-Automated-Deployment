@@ -1,0 +1,40 @@
+---
+- name: Deploy ATS-CV-Scanner Application
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install required packages
+      apt:
+        name:
+          - git
+          - python3-pip
+          - python3-venv
+          - nodejs
+          - npm
+        state: present
+
+    - name: Setup backend virtualenv
+      command: python3 -m venv venv
+      args:
+        chdir: /home/eissa/ats-cv-scanner/
+        creates: /home/eissa/ats-cv-scanner/venv
+
+    - name: Install backend dependencies
+      command: venv/bin/pip install -r requirements.txt
+      args:
+        chdir: /home/eissa/ats-cv-scanner/
+
+    - name: Setup frontend
+      command: npm install
+      args:
+        chdir: /home/eissa/ats-cv-scanner/frontend/
+
+    - name: Build frontend
+      command: npm run build
+      args:
+        chdir: /home/eissa/ats-cv-scanner/frontend/
