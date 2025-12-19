@@ -1,219 +1,167 @@
-# ATS-CV-Scanner
+# ATS Resume Scanner & Analyzer 🚀
 
-![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-18-green?logo=node.js&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-ff0050?logo=fastapi&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-646cff?logo=vite&logoColor=white)
-![Nginx](https://img.shields.io/badge/Nginx-009639?logo=nginx&logoColor=white)
-![Ansible](https://img.shields.io/badge/Ansible-EE0000?logo=ansible&logoColor=white)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-Ansible-EE0000?style=for-the-badge&logo=ansible&logoColor=white)](https://github.com/AbdullrahmanEissa/ATS-Resume-Backend-Frontend-Fully-Automated-Deployment)
+[![Backend](https://img.shields.io/badge/Backend-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Frontend](https://img.shields.io/badge/Frontend-Vite%20%2B%20React-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Docker](https://img.shields.io/badge/Container-Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](./LICENSE)
 
-> A full-stack ATS CV Scanner with backend (FastAPI), frontend (Vite SPA), Nginx for static serving & reverse proxy, and automated deployment via Ansible.
+A powerful, full-stack **Applicant Tracking System (ATS) Scanner** that automates the process of parsing resumes and matching them against job descriptions. This project demonstrates a complete **DevOps lifecycle**, featuring a modern React/Vite frontend, a robust Python/FastAPI backend, containerized microservices, and fully automated deployment using Ansible.
 
 ---
 
-## 🏗 Architecture Overview
+## 📸 Demo & Screenshots
+
+> *Insert a GIF or video walkthrough of the application here showing the upload process and result analysis.*
+
+### Dashboard View
+![Dashboard UI](path/to/your/screenshot_14-40-34.png)
+*Real-time analysis showing resume score, matched keywords, and extracted preview.*
+
+---
+
+## ✨ Key Features
+
+* **📄 Intelligent Resume Parsing:** Automatically extracts text, skills, and metadata from `.docx` and `.pdf` files.
+* **🎯 Contextual Scoring:** Compares resume content against specific job descriptions to calculate a match percentage.
+* **⚡ Modern Frontend:** Fast, responsive SPA built with **Vite** and **React/Vue**.
+* **🔧 Robust Backend API:** Built with **Python FastAPI** and **Pydantic** for high performance and strict data validation.
+* **🐳 Fully Containerized:** Dockerized services for the frontend and backend with optimized multi-stage builds.
+* **🤖 Automated Deployment:** Complete **Ansible** playbooks to provision servers, install dependencies, and deploy the application (Infrastructure as Code).
+
+---
+
+## 🏗️ Architecture
+
+The application follows a microservices architecture wrapped in Docker containers, orchestrated for local development and deployed via Ansible for production.
+
+```mermaid
+graph TD
+    Client[Client Browser] -->|HTTP/REST| Frontend[Vite Frontend Container]
+    Frontend -->|API Requests| Backend[FastAPI Backend Container]
+    Backend -->|File IO| Parser[Resume Parser Service]
+    Backend -->|NLP| Scorer[Matching Algorithm]
 
 ```
 
-┌─────────────┐           ┌───────────────┐
-│ Frontend    │  <──────> │ Backend       │
-│ Vite/SPA    │           │ FastAPI/Uvicorn │
-│ /dist       │           │ /app           │
-└─────┬───────┘           └──────┬────────┘
-│                          │
-│ HTTP requests             │ API endpoints
-▼                          ▼
-┌────────────────────────────────────────┐
-│ Nginx (Reverse Proxy + Static Server) │
-│ - Serves /dist files                  │
-│ - Proxies /api/* requests to backend │
-└────────────────────────────────────────┘
+### Tech Stack
 
-````
+* **Frontend:** React (Vite), JavaScript/TypeScript, CSS Modules.
+* **Backend:** Python 3.12, FastAPI, Pydantic, Uvicorn.
+* **DevOps:** Docker, Docker Compose, Ansible, Git.
+* **Server:** Nginx (Reverse Proxy), Ubuntu/Linux.
 
 ---
 
-## ⚡ Backend: systemd Service
-
-Ensure the FastAPI backend is **persistent and starts on boot**.
-
-**Unit file**: `/etc/systemd/system/atsscanner-backend.service`
-
-```ini
-[Unit]
-Description=ATS-CV-Scanner FastAPI backend
-After=network.target
-
-[Service]
-User=eissa
-Group=www-data
-WorkingDirectory=/home/eissa/ats-cv-scanner
-ExecStart=/home/eissa/ats-cv-scanner/venv/bin/uvicorn main:app --host 0.0.0.0 --port 8000
-
-[Install]
-WantedBy=multi-user.target
-````
-
-**Commands to manage service:**
+## 📂 Project Structure
 
 ```bash
-sudo systemctl daemon-reload
-sudo systemctl enable atsscanner-backend
-sudo systemctl start atsscanner-backend
-sudo systemctl status atsscanner-backend
+ATS-Resume-Scanner/
+├── ansible/                # Ansible playbooks for automated deployment
+│   ├── inventory/          # Server inventory configuration
+│   └── playbooks/          # Deployment tasks (deploy.yml)
+├── frontend/               # Vite SPA Source Code
+│   ├── src/
+│   ├── public/
+│   └── Dockerfile          # Frontend container definition
+├── models/                 # Pydantic data models (schemas.py)
+├── routers/                # API endpoints
+├── services/               # Business logic (parser, scorer, uploads)
+├── main.py                 # Application entry point
+├── requirements.txt        # Python dependencies
+└── Dockerfile              # Backend container definition
+
 ```
 
 ---
 
-## ⚡ Quickstart
+## 🚀 Quick Start (Local Development)
 
 ### Prerequisites
 
-* Python 3.11+ & pip
-* Node.js >= 18 & npm
-* (Optional) Ansible for deployment automation
-* Linux environment (tested on Ubuntu 22.04+)
+* Docker & Docker Compose installed.
+* Git installed.
 
----
+### Option 1: Running with Docker (Recommended)
 
-### Run Backend Locally (Development)
-
+1. **Clone the repository**
 ```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+git clone [https://github.com/AbdullrahmanEissa/ATS-Resume-Backend-Frontend-Fully-Automated-Deployment.git](https://github.com/AbdullrahmanEissa/ATS-Resume-Backend-Frontend-Fully-Automated-Deployment.git)
+cd ATS-Resume-Backend-Frontend-Fully-Automated-Deployment
+
 ```
 
-### Run Frontend Locally
 
+2. **Build and Run the Containers**
+You can build the images manually as shown in the project logs:
 ```bash
+# Create a shared network
+docker network create ats-net
+
+# Build and Run Backend
+docker build -t ats-backend .
+docker run --name backend --network ats-net -d -p 8000:8000 ats-backend:latest
+
+# Build and Run Frontend
 cd frontend
-npm install
-npm run dev
+docker build -t ats-frontend .
+docker run --name frontend --network ats-net -d -p 5173:5173 ats-frontend:latest
+
 ```
 
-* Local frontend dev URL: `http://localhost:5173` (Vite default)
+
+3. **Access the App**
+* Frontend: `http://localhost:5173`
+* Backend API Docs: `http://localhost:8000/docs`
+
+
 
 ---
 
-## 📡 API Endpoints
+## ⚙️ Production Deployment (Ansible)
 
-* **Base URL (local dev):** `http://localhost:8000`
+This project uses **Ansible** to fully automate the deployment process on a Linux server.
 
-### Health Check
-
-```http
-GET /health
-```
-
-**Response:**
-
-```json
-{ "status": "healthy", "message": "ATS CV Scanner API is running" }
-```
-
-### Upload CV
-
-```http
-POST /upload-cv
-```
-
-**Request:** `multipart/form-data` with key `file`
-**Example:**
-
+1. **Configure Inventory:**
+Update `ansible/inventory/hosts.ini` with your target server IP and user details.
+2. **Run the Playbook:**
+The `deploy.yml` playbook handles updating `apt`, setting up Python/Node environments, and deploying the code.
 ```bash
-curl -F "file=@/path/to/your/resume.pdf" http://localhost:8000/upload-cv
+cd ansible
+ansible-playbook -i inventory/hosts.ini playbooks/deploy.yml
+
 ```
 
-**Notes:**
 
-* Allowed extensions: `.pdf`, `.docx`
-* Max file size: 10 MB (configurable in `config.py`)
+*What this playbook does:*
+* ✅ Updates system packages.
+* ✅ Installs Node.js 20.x, Python 3, pip, and venv.
+* ✅ Sets up the backend virtual environment and installs dependencies.
+* ✅ Builds the Vite frontend for production.
 
-### Analyze CV
 
-```http
-POST /analyze
-```
-
-**Description:** Score an uploaded CV against a job description
 
 ---
 
-## 🚀 Production Setup (Nginx + systemd)
+## 👨‍💻 Skills Demonstrated
 
-### Frontend with Nginx
+This project serves as a portfolio piece demonstrating proficiency in:
 
-1. Build frontend:
-
-```bash
-cd frontend
-npm install
-npm run build
-```
-
-2. Create Nginx site config: `/etc/nginx/sites-available/atsscanner`
-
-```nginx
-server {
-    listen 80;
-    server_name localhost;
-
-    root /home/eissa/ats-cv-scanner/frontend/dist;
-    index index.html;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # Proxy API requests to backend
-    location /api/ {
-        proxy_pass http://127.0.0.1:8000/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-
-3. Enable site and restart Nginx:
-
-```bash
-sudo ln -s /etc/nginx/sites-available/atsscanner /etc/nginx/sites-enabled/
-sudo rm /etc/nginx/sites-enabled/default
-sudo nginx -t
-sudo systemctl restart nginx
-```
-
-4. Open browser:
-
-```
-http://localhost
-```
+* **Full-Stack Development:** Connecting a reactive frontend with a logic-heavy backend.
+* **DevOps & Automation:** Moving beyond "it works on my machine" to reliable Ansible deployments.
+* **Containerization:** optimizing Dockerfiles for separate build and runtime environments.
+* **System Design:** Structuring a clean MVC-patterned backend with `routers`, `services`, and `models`.
 
 ---
 
-## 🔧 Ansible Deployment
+## 📝 License
 
-Automate setup:
-
-* Update apt cache
-* Install Python, pip, Node.js, npm
-* Setup backend virtualenv and install dependencies
-* Build frontend with npm
-* Manage systemd backend service
-* Configure Nginx site
-
-> Ensures **repeatable, production-ready deployment**.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
-## ✅ Best Practices
+**Author:** [Abdullrahman Eissa](https://www.google.com/search?q=https://github.com/AbdullrahmanEissa)
 
-* Use `sites-available` + `sites-enabled` for Nginx.
-* Keep `nginx.conf` clean; server blocks go in `sites-available`.
-* Use systemd for backend for uptime and reboot persistence.
-* Set permissions so `www-data` can read frontend `dist`.
-* Build frontend once for production; no `npm run dev`.
+```
+
+```
