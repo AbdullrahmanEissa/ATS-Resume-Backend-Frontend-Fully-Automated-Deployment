@@ -217,6 +217,3 @@ Automate setup:
 * Use systemd for backend for uptime and reboot persistence.
 * Set permissions so `www-data` can read frontend `dist`.
 * Build frontend once for production; no `npm run dev`.
-
-Do you want me to do that next?
-```
