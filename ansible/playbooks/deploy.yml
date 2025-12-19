@@ -8,14 +8,17 @@
       apt:
         update_cache: yes
 
+    - name: Add NodeSource Node.js 20 repo
+      shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+
     - name: Install required packages
       apt:
         name:
+          - nginx
           - git
           - python3-pip
           - python3-venv
           - nodejs
-          - npm
         state: present
 
     - name: Setup backend virtualenv
@@ -29,7 +32,7 @@
       args:
         chdir: /home/eissa/ats-cv-scanner/
 
-    - name: Setup frontend
+    - name: Install frontend dependencies
       command: npm install
       args:
         chdir: /home/eissa/ats-cv-scanner/frontend/
@@ -38,3 +41,22 @@
       command: npm run build
       args:
         chdir: /home/eissa/ats-cv-scanner/frontend/
+
+    - name: Configure Nginx
+      shell:
+        rm /etc/nginx/sites-enabled/default
+      ignore_errors: yes
+
+    - name: Copy Nginx configuration
+      shell: |
+        cp /home/eissa/ats-cv-scanner/nginx/deploy/atsscanner /etc/nginx/sites-available/
+        ln -sf /etc/nginx/sites-available/atsscanner /etc/nginx/sites-enabled/
+
+    - name: Restart Nginx
+      service:
+        name: nginx
+        state: restarted
+
+    - name: Start backend application
+      shell:
+        sudo systemctl start ats-backend.service
